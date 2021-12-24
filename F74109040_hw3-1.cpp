@@ -52,9 +52,9 @@ class FileIO {
   std::ifstream inputFileBuffer;
   std::string outputFileName;
   std::ofstream outputFileBuffer;
-  int getDataSets();
-  int getVertices();
-  int getEntryPoint();
+  // int getDataSets();
+  // int getVertices();
+  // int getEntryPoint();
 };
 class DataSet {
  public:
@@ -64,6 +64,16 @@ class DataSet {
   int nodeCount;
 
  private:
+};
+
+class Parser {
+ public:
+  std::vector<DataSet> parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
+
+ private:
+  int getDataSetsCount(const std::string &line);
+  inputType getInputType(const std::string &line);
+  int getNodeCount(const std::string &line);
 };
 /**
  * pass in preorderVector and inorderVector and record it's start and end by varibles to represent vector as subvector
@@ -124,7 +134,7 @@ void traverseTreeAndPushNodesToVector(TreeNode *nodeRoot, printType type, std::v
     vectorOfNodeValue.push_back(nodeRoot->value);
   }
 }
-int getDataSetsCount(const std::string &line) {
+int Parser::getDataSetsCount(const std::string &line) {
   int dataSetsCount;
   std::istringstream lineStream(line);
   if (lineStream >> dataSetsCount) {
@@ -133,7 +143,7 @@ int getDataSetsCount(const std::string &line) {
     throw std::invalid_argument("can not get datasetscount");
   }
 }
-inputType getInputType(const std::string &line) {
+inputType Parser::getInputType(const std::string &line) {
   if (line == "preorder-inorder") {
     return inputType::preOrder_inOrder;
   } else if (line == "postorder-inorder") {
@@ -142,7 +152,7 @@ inputType getInputType(const std::string &line) {
     throw std::invalid_argument("can not get inputtype");
   }
 }
-int getNodeCount(const std::string &line) {
+int Parser::getNodeCount(const std::string &line) {
   int nodeCount;
   std::istringstream lineStream(line);
   if (lineStream >> nodeCount) {
@@ -165,7 +175,7 @@ std::vector<int> getVectorOfNode(const std::string &line, const int nodeCount) {
   return vectorOfNode;
 }
 // preorderAndInorder
-std::vector<DataSet> parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
+std::vector<DataSet> Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   int startIndex = 0;
   std::vector<DataSet> vectorOfDataSets;
   int dataSetsCount = getDataSetsCount(vectorOfStrings.at(startIndex++));
@@ -192,7 +202,8 @@ int main() {
   file.openFile();
   file.createFile();
   std::vector<std::string> vectorOfStrings = file.convertFileToVectorOfStrings();
-  std::vector<DataSet> vectorOfDataSets = parseVectorOfStrings(vectorOfStrings);
+  Parser parser;
+  std::vector<DataSet> vectorOfDataSets = parser.parseVectorOfStrings(vectorOfStrings);
   file.closeInputFile();
   for (auto &dataSet : vectorOfDataSets) {
     TreeNode *nodeRoot = nullptr;
