@@ -38,32 +38,34 @@ class FileIO {
   std::ifstream inputFileBuffer;
   std::string outputFileName;
   std::ofstream outputFileBuffer;
-  int getDataSets();
-  int getVertices();
-  int getEntryPoint();
 };
-class DataSet {
+class Parser {
  public:
-  void getVerticesCountAndEntryPoint(std::string &line);
-  int getVertices();
+  std::vector<Graph> parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
 
  private:
-  int vertices;
-  int entryPoint;
+  struct verticesAndEntryPoint {
+    int vertices;
+    int entryPoint;
+  };
+  int getDataSetsCount(std::string &line);
+  verticesAndEntryPoint getVerticesCountAndEntryPoint(std::string &line);
+  void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, Graph &targetGraph);
+  int startIndex = 0;
 };
 void handleCinError() {
   std::cin.clear();
   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
   throw std::invalid_argument("Invalid input, please enter valid value");
 }
-std::vector<Graph> parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
 int main() {
   FileIO file;
   file.getFileNameFromInput();
   file.openFile();
   file.createFile();
   std::vector<std::string> vectorOfStrings = file.convertFileToVectorOfStrings();
-  std::vector<Graph> vectorOfGraph = parseVectorOfStrings(vectorOfStrings);
+  Parser parser;
+  std::vector<Graph> vectorOfGraph = parser.parseVectorOfStrings(vectorOfStrings);
   for (auto &GraphObject : vectorOfGraph) {
     GraphObject.DFS();
     std::vector<int> vectorOfPath = GraphObject.getVectorOfPath();
@@ -135,7 +137,7 @@ void FileIO::getFileNameFromInput() {
     handleCinError();
   }
 }
-int getDataSetsCount(std::string &line) {
+int Parser::getDataSetsCount(std::string &line) {
   int dataSetsCount;
   std::istringstream lineStream(line);
   if (lineStream >> dataSetsCount) {
@@ -144,15 +146,17 @@ int getDataSetsCount(std::string &line) {
     throw std::invalid_argument("can not get data set count");
   }
 }
-void DataSet::getVerticesCountAndEntryPoint(std::string &line) {
+Parser::verticesAndEntryPoint Parser::getVerticesCountAndEntryPoint(std::string &line) {
   std::istringstream lineStream(line);
+  int vertices;
+  int entryPoint;
   if (lineStream >> vertices >> entryPoint) {
+    return {vertices, entryPoint};
   } else {
     throw std::invalid_argument("can not get vertices and entrypoint");
   }
 }
-int DataSet::getVertices() { return vertices; }
-void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, int startIndex, Graph &targetGraph) {
+void Parser::parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, Graph &targetGraph) {
   for (int i = 0; i < vertices; i++) {
     std::string line = vectorOfStrings.at(i + startIndex);
     std::istringstream lineStream(line);
@@ -166,16 +170,17 @@ void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, in
     }
   }
 }
-std::vector<Graph> parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
-  int startIndex = 0;
+std::vector<Graph> Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   std::vector<Graph> vectorOfGraph;
   int dataSetsCount = getDataSetsCount(vectorOfStrings.at(startIndex++));
   for (int i = 0; i < dataSetsCount; i++) {
-    DataSet tmp;
-    tmp.getVerticesCountAndEntryPoint(vectorOfStrings.at(startIndex++));
-    int vertices = tmp.getVertices();
+    Parser::verticesAndEntryPoint tmp;
+    tmp = getVerticesCountAndEntryPoint(vectorOfStrings.at(startIndex++));
+    int vertices = tmp.vertices;
+    int entryPoint = tmp.entryPoint;
     Graph tmpGraph(vertices);
-    parseMatrixInput(vertices, vectorOfStrings, startIndex, tmpGraph);
+    tmpGraph.setEntryPoint(entryPoint);
+    parseMatrixInput(vertices, vectorOfStrings, tmpGraph);
     startIndex += vertices;
     vectorOfGraph.push_back(tmpGraph);
   }
