@@ -41,9 +41,8 @@ class FileIO {
   int getDataSets();
   int getVertices();
   int getEntryPoint();
-  void getMatrix(int verticesCount, Graph &tmpGraph);
 };
-class dataSet {
+class DataSet {
  public:
   void getVerticesCountAndEntryPoint(std::string &line);
   int getVertices();
@@ -63,8 +62,8 @@ int main() {
   file.getFileNameFromInput();
   file.openFile();
   file.createFile();
-  std::vector<std::string> vectorOfStrins = file.convertFileToVectorOfStrings();
-  std::vector<Graph> vectorOfGraph = parseVectorOfStrings(vectorOfStrins);
+  std::vector<std::string> vectorOfStrings = file.convertFileToVectorOfStrings();
+  std::vector<Graph> vectorOfGraph = parseVectorOfStrings(vectorOfStrings);
   for (auto &GraphObject : vectorOfGraph) {
     GraphObject.DFS();
     std::vector<int> vectorOfPath = GraphObject.getVectorOfPath();
@@ -107,9 +106,11 @@ void FileIO::createFile() {
   outputFileName = std::regex_replace(inputFileName, std::regex("input"), "output");
   outputFileBuffer.open(outputFileName);
   if (outputFileBuffer.is_open()) {
-    std::cout << "outputfile opened" << std::endl;
+    std::cout << "outputfile"
+              << "`" << outputFileName << "`"
+              << "opened" << std::endl;
   } else {
-    throw std::invalid_argument("error");
+    throw std::invalid_argument("outputfile did not open");
   }
 }
 void FileIO::writeFile(std::vector<int> &vectorOfPath) {
@@ -140,17 +141,17 @@ int getDataSetsCount(std::string &line) {
   if (lineStream >> dataSetsCount) {
     return dataSetsCount;
   } else {
-    throw std::invalid_argument("error");
+    throw std::invalid_argument("can not get data set count");
   }
 }
-void dataSet::getVerticesCountAndEntryPoint(std::string &line) {
+void DataSet::getVerticesCountAndEntryPoint(std::string &line) {
   std::istringstream lineStream(line);
   if (lineStream >> vertices >> entryPoint) {
   } else {
-    throw std::invalid_argument("error");
+    throw std::invalid_argument("can not get vertices and entrypoint");
   }
 }
-int dataSet::getVertices() { return vertices; }
+int DataSet::getVertices() { return vertices; }
 void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, int startIndex, Graph &targetGraph) {
   for (int i = 0; i < vertices; i++) {
     std::string line = vectorOfStrings.at(i + startIndex);
@@ -160,7 +161,7 @@ void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, in
       if (lineStream >> vertex) {
         targetGraph.setMatrix(i, j, vertex);
       } else {
-        throw std::invalid_argument("error");
+        throw std::invalid_argument("read matrix input failed");
       }
     }
   }
@@ -170,7 +171,7 @@ std::vector<Graph> parseVectorOfStrings(std::vector<std::string> vectorOfStrings
   std::vector<Graph> vectorOfGraph;
   int dataSetsCount = getDataSetsCount(vectorOfStrings.at(startIndex++));
   for (int i = 0; i < dataSetsCount; i++) {
-    dataSet tmp;
+    DataSet tmp;
     tmp.getVerticesCountAndEntryPoint(vectorOfStrings.at(startIndex++));
     int vertices = tmp.getVertices();
     Graph tmpGraph(vertices);
