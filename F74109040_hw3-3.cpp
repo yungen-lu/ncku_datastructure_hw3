@@ -8,7 +8,7 @@
 #include <unordered_set>
 #include <vector>
 class Graph {
- public:
+public:
   Graph(int i) : vertices(i), matrix(vertices, std::vector<int>(vertices, 0)) {}
   void setMatrix(int row, int columun, int value);
   void setEntryPoint(int i);
@@ -17,7 +17,7 @@ class Graph {
   void BFS(int start, std::queue<int> &queue);
   std::vector<int> getVectorOfPath();
 
- private:
+private:
   int vertices;
   int entryPoint = 0;
   std::vector<std::vector<int>> matrix;
@@ -25,7 +25,7 @@ class Graph {
   std::unordered_set<int> visited;
 };
 class FileIO {
- public:
+public:
   void getFileNameFromInput();
   void openFile();
   void closeInputFile();
@@ -34,24 +34,26 @@ class FileIO {
   void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
 
- private:
+private:
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
   std::ofstream outputFileBuffer;
 };
 class Parser {
- public:
-  std::vector<Graph> parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
+public:
+  std::vector<Graph>
+  parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
 
- private:
+private:
   struct verticesAndEntryPoint {
     int vertices;
     int entryPoint;
   };
   int getDataSetsCount(std::string &line);
   verticesAndEntryPoint getVerticesCountAndEntryPoint(std::string &line);
-  void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, Graph &targetGraph);
+  void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings,
+                        Graph &targetGraph);
   int startIndex = 0;
 };
 void handleCinError() {
@@ -64,20 +66,26 @@ int main() {
   file.getFileNameFromInput();
   file.openFile();
   file.createFile();
-  std::vector<std::string> vectorOfStrings = file.convertFileToVectorOfStrings();
+  std::vector<std::string> vectorOfStrings =
+      file.convertFileToVectorOfStrings();
+  file.closeInputFile();
   Parser parser;
-  std::vector<Graph> vectorOfGraph = parser.parseVectorOfStrings(vectorOfStrings);
+  std::vector<Graph> vectorOfGraph =
+      parser.parseVectorOfStrings(vectorOfStrings);
   for (auto &GraphObject : vectorOfGraph) {
     GraphObject.BFS();
     std::vector<int> vectorOfPath = GraphObject.getVectorOfPath();
     file.writeFile(vectorOfPath);
   }
-  file.closeInputFile();
+  file.closeOutputFile();
 }
-void Graph::setMatrix(int row, int columun, int value) { matrix.at(row).at(columun) = value; }
+void Graph::setMatrix(int row, int columun, int value) {
+  matrix.at(row).at(columun) = value;
+}
 void Graph::setEntryPoint(int i) { entryPoint = i; }
 void Graph::printMatrix() {
-  std::cout << "vertices: " << vertices << "entrypoint: " << entryPoint << std::endl;
+  std::cout << "vertices: " << vertices << "entrypoint: " << entryPoint
+            << std::endl;
   std::cout << "------------------" << std::endl;
   for (int i = 0; i < vertices; i++) {
     for (int j = 0; j < vertices; j++) {
@@ -93,7 +101,8 @@ void FileIO::openFile() {
     std::cout << "Load file success." << std::endl << std::endl;
   } else {
     std::cerr << "can't open file name : " << inputFileName << std::endl;
-    inputFileBuffer.close();  // if can not open file get a new filename and try again
+    inputFileBuffer
+        .close(); // if can not open file get a new filename and try again
     getFileNameFromInput();
     openFile();
   }
@@ -108,7 +117,8 @@ std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   return vectorOfStrings;
 }
 void FileIO::createFile() {
-  outputFileName = std::regex_replace(inputFileName, std::regex("input"), "output");
+  outputFileName =
+      std::regex_replace(inputFileName, std::regex("input"), "output");
   outputFileBuffer.open(outputFileName);
   if (outputFileBuffer.is_open()) {
     std::cout << "outputfile"
@@ -149,7 +159,8 @@ int Parser::getDataSetsCount(std::string &line) {
     throw std::invalid_argument("can not get data set count");
   }
 }
-Parser::verticesAndEntryPoint Parser::getVerticesCountAndEntryPoint(std::string &line) {
+Parser::verticesAndEntryPoint
+Parser::getVerticesCountAndEntryPoint(std::string &line) {
   std::istringstream lineStream(line);
   int vertices;
   int entryPoint;
@@ -159,7 +170,9 @@ Parser::verticesAndEntryPoint Parser::getVerticesCountAndEntryPoint(std::string 
     throw std::invalid_argument("can not get vertices and entrypoint");
   }
 }
-void Parser::parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings, Graph &targetGraph) {
+void Parser::parseMatrixInput(int vertices,
+                              std::vector<std::string> vectorOfStrings,
+                              Graph &targetGraph) {
   for (int i = 0; i < vertices; i++) {
     std::string line = vectorOfStrings.at(i + startIndex);
     std::istringstream lineStream(line);
@@ -173,7 +186,8 @@ void Parser::parseMatrixInput(int vertices, std::vector<std::string> vectorOfStr
     }
   }
 }
-std::vector<Graph> Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
+std::vector<Graph>
+Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   std::vector<Graph> vectorOfGraph;
   int dataSetsCount = getDataSetsCount(vectorOfStrings.at(startIndex++));
   for (int i = 0; i < dataSetsCount; i++) {
