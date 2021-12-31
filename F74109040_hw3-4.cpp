@@ -44,15 +44,19 @@ public:
 };
 class FileIO {
 public:
+  ~FileIO() {
+    closeInputFile();
+    closeOutputFile();
+  }
   void getFileNameFromInput();
   void openFile();
-  void closeInputFile();
   void createFile();
   void writeFile(unsigned int result);
-  void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
 
 private:
+  void closeInputFile();
+  void closeOutputFile();
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
@@ -79,30 +83,18 @@ void handleCinError() {
 }
 
 int main() {
-  // Graph test(7);
-  // test.addEdge(0, 1, 28);
-  // test.addEdge(0, 5, 10);
-  // test.addEdge(1, 2, 16);
-  // test.addEdge(5, 4, 25);
-  // test.addEdge(6, 4, 24);
-  // test.addEdge(1, 6, 14);
-  // test.addEdge(3, 4, 22);
-  // test.addEdge(2, 3, 12);
-  // test.addEdge(3, 6, 18);
-
-  // std::cout << test.algo() << std::endl;
   FileIO file;
   file.getFileNameFromInput();
   file.openFile();
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  file.closeInputFile();
+  // file.closeInputFile();
   Parser parser;
   Graph myGraph = parser.parseVectorOfStrings(vectorOfStrings);
   unsigned int result = myGraph.algo();
   file.writeFile(result);
-  file.closeOutputFile();
+  // file.closeOutputFile();
   return 0;
 }
 void Graph::addEdge(int f, int s, int w) {

@@ -48,12 +48,14 @@ private:
 };
 class FileIO {
 public:
+  ~FileIO() {
+    closeInputFile();
+    closeOutputFile();
+  }
   void getFileNameFromInput();
   void openFile();
-  void closeInputFile();
   void createFile();
   void writeFile(const std::vector<int> &vectorOfNode);
-  void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
 
 private:
@@ -61,9 +63,8 @@ private:
   std::ifstream inputFileBuffer;
   std::string outputFileName;
   std::ofstream outputFileBuffer;
-  // int getDataSets();
-  // int getVertices();
-  // int getEntryPoint();
+  void closeInputFile();
+  void closeOutputFile();
 };
 class DataSet {
 public:
@@ -235,11 +236,11 @@ int main() {
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  file.closeInputFile();
+  // file.closeInputFile();
   Parser parser;
   std::vector<DataSet> vectorOfDataSets =
       parser.parseVectorOfStrings(vectorOfStrings);
-  file.closeInputFile();
+  // file.closeInputFile();
   for (auto &dataSet : vectorOfDataSets) {
     TreeNode *nodeRoot = nullptr;
     printType type;
@@ -263,14 +264,7 @@ int main() {
     traverseTreeAndPushNodesToVector(nodeRoot, type, vectorOfNodeValue);
     file.writeFile(vectorOfNodeValue);
   }
-  file.closeOutputFile();
-
-  // preorderAndInorder test;
-  // std::vector<int> pre{1, 2, 3, 4, 5, 6, 7};
-  // std::vector<int> in{3, 2, 4, 1, 6, 5, 7};
-  // std::vector<int> vectorOfNodeValue;
-  // printTree(test.createTreeWithTwoVectors(pre, in), printType::postOrder,
-  // vectorOfNodeValue);
+  // file.closeOutputFile();
 }
 TreeNode *postorderAndInorder::traverse(const std::vector<int> &postorderVector,
                                         unsigned int postorderVectorStart,

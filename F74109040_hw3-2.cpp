@@ -25,15 +25,19 @@ private:
 };
 class FileIO {
 public:
+  ~FileIO() {
+    closeInputFile();
+    closeOutputFile();
+  }
   void getFileNameFromInput();
   void openFile();
-  void closeInputFile();
   void createFile();
   void writeFile(std::vector<int> &vectorOfPath);
-  void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
 
 private:
+  void closeOutputFile();
+  void closeInputFile();
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
@@ -67,7 +71,7 @@ int main() {
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  file.closeInputFile();
+  // file.closeInputFile();
   Parser parser;
   std::vector<Graph> vectorOfGraph =
       parser.parseVectorOfStrings(vectorOfStrings);
@@ -76,7 +80,7 @@ int main() {
     std::vector<int> vectorOfPath = GraphObject.getVectorOfPath();
     file.writeFile(vectorOfPath);
   }
-  file.closeOutputFile();
+  // file.closeOutputFile();
 }
 void Graph::setMatrix(int row, int columun, int value) {
   matrix.at(row).at(columun) = value;
