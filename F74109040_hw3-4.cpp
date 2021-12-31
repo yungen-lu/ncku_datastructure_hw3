@@ -23,14 +23,14 @@ public:
 };
 class SetsNode {
 public:
-  SetsNode(int parentValue) : parentValue(parentValue) {}
+  explicit SetsNode(int parentValue) : parentValue(parentValue) {}
   int parentValue;
   bool isRoot = true;
   unsigned int childCount = 0;
 };
 class Graph {
 public:
-  Graph(int a) : verties(a) {}
+  explicit Graph(int a) : verties(a) {}
   unsigned int verties = 0;
   void addEdge(int f, int s, int w);
   void addEdge(AdjacentList list);
@@ -44,19 +44,15 @@ public:
 };
 class FileIO {
 public:
-  ~FileIO() {
-    closeInputFile();
-    closeOutputFile();
-  }
   void getFileNameFromInput();
   void openFile();
   void createFile();
   void writeFile(unsigned int result);
+  void closeInputFile();
+  void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
 
 private:
-  void closeInputFile();
-  void closeOutputFile();
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
@@ -71,9 +67,9 @@ private:
     unsigned int verticesCount;
     unsigned int edgeCount;
   };
-  verticesAndEntryPoint getVerticesCountAndEdgeCount(std::string &line);
+  verticesAndEntryPoint getVerticesCountAndEdgeCount(std::string &line) const;
   unsigned int startIndex = 0;
-  AdjacentList getAdjacentList(std::string &line);
+  AdjacentList getAdjacentList(std::string &line) const;
 };
 
 void handleCinError() {
@@ -89,12 +85,12 @@ int main() {
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  // file.closeInputFile();
+  file.closeInputFile();
   Parser parser;
   Graph myGraph = parser.parseVectorOfStrings(vectorOfStrings);
   unsigned int result = myGraph.algo();
   file.writeFile(result);
-  // file.closeOutputFile();
+  file.closeOutputFile();
   return 0;
 }
 void Graph::addEdge(int f, int s, int w) {
@@ -211,7 +207,7 @@ void FileIO::getFileNameFromInput() {
   }
 }
 Parser::verticesAndEntryPoint
-Parser::getVerticesCountAndEdgeCount(std::string &line) {
+Parser::getVerticesCountAndEdgeCount(std::string &line) const {
   std::istringstream lineStream(line);
   unsigned int verticesCount;
   unsigned int edgeCount;
@@ -230,7 +226,7 @@ Graph Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   }
   return GraphObject;
 }
-AdjacentList Parser::getAdjacentList(std::string &line) {
+AdjacentList Parser::getAdjacentList(std::string &line) const {
   std::istringstream lineStream(line);
   int firstNode;
   int secondNode;

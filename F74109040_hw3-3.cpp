@@ -9,13 +9,14 @@
 #include <vector>
 class Graph {
 public:
-  Graph(int i) : vertices(i), matrix(vertices, std::vector<int>(vertices, 0)) {}
+  explicit Graph(int i)
+      : vertices(i), matrix(vertices, std::vector<int>(vertices, 0)) {}
   void setMatrix(int row, int columun, int value);
   void setEntryPoint(int i);
   void printMatrix();
   void BFS();
   void BFS(int start, std::queue<int> &queue);
-  std::vector<int> getVectorOfPath();
+  std::vector<int> getVectorOfPath() const;
 
 private:
   int vertices;
@@ -26,19 +27,15 @@ private:
 };
 class FileIO {
 public:
-  ~FileIO() {
-    closeInputFile();
-    closeOutputFile();
-  }
   void getFileNameFromInput();
   void openFile();
   void createFile();
   void writeFile(std::vector<int> &vectorOfPath);
   std::vector<std::string> convertFileToVectorOfStrings();
-
-private:
   void closeInputFile();
   void closeOutputFile();
+
+private:
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
@@ -54,10 +51,10 @@ private:
     int vertices;
     int entryPoint;
   };
-  int getDataSetsCount(std::string &line);
-  verticesAndEntryPoint getVerticesCountAndEntryPoint(std::string &line);
+  int getDataSetsCount(std::string &line) const;
+  verticesAndEntryPoint getVerticesCountAndEntryPoint(std::string &line) const;
   void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings,
-                        Graph &targetGraph);
+                        Graph &targetGraph) const;
   int startIndex = 0;
 };
 void handleCinError() {
@@ -72,7 +69,7 @@ int main() {
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  // file.closeInputFile();
+  file.closeInputFile();
   Parser parser;
   std::vector<Graph> vectorOfGraph =
       parser.parseVectorOfStrings(vectorOfStrings);
@@ -81,7 +78,7 @@ int main() {
     std::vector<int> vectorOfPath = GraphObject.getVectorOfPath();
     file.writeFile(vectorOfPath);
   }
-  // file.closeOutputFile();
+  file.closeOutputFile();
 }
 void Graph::setMatrix(int row, int columun, int value) {
   matrix.at(row).at(columun) = value;
@@ -154,7 +151,7 @@ void FileIO::getFileNameFromInput() {
     handleCinError();
   }
 }
-int Parser::getDataSetsCount(std::string &line) {
+int Parser::getDataSetsCount(std::string &line) const {
   int dataSetsCount;
   std::istringstream lineStream(line);
   if (lineStream >> dataSetsCount) {
@@ -164,7 +161,7 @@ int Parser::getDataSetsCount(std::string &line) {
   }
 }
 Parser::verticesAndEntryPoint
-Parser::getVerticesCountAndEntryPoint(std::string &line) {
+Parser::getVerticesCountAndEntryPoint(std::string &line) const {
   std::istringstream lineStream(line);
   int vertices;
   int entryPoint;
@@ -176,7 +173,7 @@ Parser::getVerticesCountAndEntryPoint(std::string &line) {
 }
 void Parser::parseMatrixInput(int vertices,
                               std::vector<std::string> vectorOfStrings,
-                              Graph &targetGraph) {
+                              Graph &targetGraph) const {
   for (int i = 0; i < vertices; i++) {
     std::string line = vectorOfStrings.at(i + startIndex);
     std::istringstream lineStream(line);
@@ -220,14 +217,12 @@ void Graph::BFS(int start, std::queue<int> &queue) {
     queue.pop();
     std::vector<int> vectorOfNeighboors = matrix.at(poped);
     for (int i = 0; i < vertices; i++) {
-      if (vectorOfNeighboors.at(i)) {
-        if (!visited.count(i)) {
-          visited.insert(i);
-          queue.push(i);
-          vectorOfPath.push_back(i);
-        }
+      if (vectorOfNeighboors.at(i) && !visited.count(i)) {
+        visited.insert(i);
+        queue.push(i);
+        vectorOfPath.push_back(i);
       }
     }
   }
 }
-std::vector<int> Graph::getVectorOfPath() { return vectorOfPath; }
+std::vector<int> Graph::getVectorOfPath() const { return vectorOfPath; }

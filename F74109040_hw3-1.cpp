@@ -27,11 +27,11 @@ public:
 
 private:
   TreeNode *traverse(const std::vector<int> &preorderVector,
-                     unsigned int preorderVectorStart,
-                     unsigned int preorderVectorEnd,
+                     unsigned long preorderVectorStart,
+                     unsigned long preorderVectorEnd,
                      const std::vector<int> &inorderVector,
-                     unsigned int inorderVectorStart,
-                     unsigned int inorderVectorEnd);
+                     unsigned long inorderVectorStart,
+                     unsigned long inorderVectorEnd);
 };
 class postorderAndInorder {
 public:
@@ -40,31 +40,27 @@ public:
 
 private:
   TreeNode *traverse(const std::vector<int> &postorderVector,
-                     unsigned int postorderVectorStart,
-                     unsigned int postorderVectorEnd,
+                     unsigned long postorderVectorStart,
+                     unsigned long postorderVectorEnd,
                      const std::vector<int> &inorderVector,
-                     unsigned int inorderVectorStart,
-                     unsigned int inorderVectorEnd);
+                     unsigned long inorderVectorStart,
+                     unsigned long inorderVectorEnd);
 };
 class FileIO {
 public:
-  ~FileIO() {
-    closeInputFile();
-    closeOutputFile();
-  }
   void getFileNameFromInput();
   void openFile();
   void createFile();
   void writeFile(const std::vector<int> &vectorOfNode);
   std::vector<std::string> convertFileToVectorOfStrings();
+  void closeInputFile();
+  void closeOutputFile();
 
 private:
   std::string inputFileName;
   std::ifstream inputFileBuffer;
   std::string outputFileName;
   std::ofstream outputFileBuffer;
-  void closeInputFile();
-  void closeOutputFile();
 };
 class DataSet {
 public:
@@ -82,11 +78,11 @@ public:
   parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
 
 private:
-  int getDataSetsCount(const std::string &line);
-  inputType getInputType(const std::string &line);
-  int getNodeCount(const std::string &line);
+  int getDataSetsCount(const std::string &line) const;
+  inputType getInputType(const std::string &line) const;
+  int getNodeCount(const std::string &line) const;
   std::vector<int> getVectorOfNode(const std::string &line,
-                                   const int nodeCount);
+                                   const int nodeCount) const;
 
   int startIndex = 0;
 };
@@ -99,42 +95,42 @@ private:
  * at the start of the subvector, the new Start position will be out of bounds.
  */
 TreeNode *preorderAndInorder::traverse(const std::vector<int> &preorderVector,
-                                       unsigned int preorderVectorStart,
-                                       unsigned int preorderVectorEnd,
+                                       unsigned long preorderVectorStart,
+                                       unsigned long preorderVectorEnd,
                                        const std::vector<int> &inorderVector,
-                                       unsigned int inorderVectorStart,
-                                       unsigned int inorderVectorEnd) {
+                                       unsigned long inorderVectorStart,
+                                       unsigned long inorderVectorEnd) {
   if (preorderVectorStart == preorderVectorEnd) { // there is no subvector
     return nullptr;
   }
   int rootValue = preorderVector.at(
       preorderVectorStart); // the element at `preorderVectorStart` in
                             // preorderVector is the root in current scope
-  TreeNode *newNode = new TreeNode(rootValue);
+  auto *newNode = new TreeNode(rootValue);
   if ((preorderVectorEnd - preorderVectorStart) ==
       1) { // there is only one element in current subvector
     return newNode;
   }
-  unsigned int middleIndex; // find the middleIndex in the inorderVector
-                            // subvector, and divide the subvector
+  unsigned long middleIndex; // find the middleIndex in the inorderVector
+                             // subvector, and divide the subvector
   for (middleIndex = inorderVectorStart; middleIndex <= inorderVectorEnd;
        middleIndex++) {
     if (inorderVector.at(middleIndex) == rootValue) {
       break;
     }
   }
-  unsigned int leftInorderVectorStart = inorderVectorStart;
-  unsigned int leftInorderVectorEnd = middleIndex;
+  unsigned long leftInorderVectorStart = inorderVectorStart;
+  unsigned long leftInorderVectorEnd = middleIndex;
 
-  unsigned int rightInorderVectorStart = leftInorderVectorEnd + 1;
-  unsigned int rightInorderVectorEnd = inorderVectorEnd;
+  unsigned long rightInorderVectorStart = leftInorderVectorEnd + 1;
+  unsigned long rightInorderVectorEnd = inorderVectorEnd;
 
-  unsigned int leftPreorderVectorStart = preorderVectorStart + 1;
-  unsigned int leftPreorderVectorEnd =
+  unsigned long leftPreorderVectorStart = preorderVectorStart + 1;
+  unsigned long leftPreorderVectorEnd =
       leftPreorderVectorStart + (middleIndex - inorderVectorStart);
 
-  unsigned int rightPreorderVectorStart = leftPreorderVectorEnd;
-  unsigned int rightPreorderVectorEnd = preorderVectorEnd;
+  unsigned long rightPreorderVectorStart = leftPreorderVectorEnd;
+  unsigned long rightPreorderVectorEnd = preorderVectorEnd;
   newNode->left =
       traverse(preorderVector, leftPreorderVectorStart, leftPreorderVectorEnd,
                inorderVector, leftInorderVectorStart, leftInorderVectorEnd);
@@ -164,7 +160,7 @@ void traverseTreeAndPushNodesToVector(TreeNode *nodeRoot, printType type,
     vectorOfNodeValue.push_back(nodeRoot->value);
   }
 }
-int Parser::getDataSetsCount(const std::string &line) {
+int Parser::getDataSetsCount(const std::string &line) const {
   int dataSetsCount;
   std::istringstream lineStream(line);
   if (lineStream >> dataSetsCount) {
@@ -173,7 +169,7 @@ int Parser::getDataSetsCount(const std::string &line) {
     throw std::invalid_argument("can not get datasetscount");
   }
 }
-inputType Parser::getInputType(const std::string &line) {
+inputType Parser::getInputType(const std::string &line) const {
   if (line == "preorder-inorder") {
     return inputType::preOrder_inOrder;
   } else if (line == "postorder-inorder") {
@@ -182,7 +178,7 @@ inputType Parser::getInputType(const std::string &line) {
     throw std::invalid_argument("can not get inputtype");
   }
 }
-int Parser::getNodeCount(const std::string &line) {
+int Parser::getNodeCount(const std::string &line) const {
   int nodeCount;
   std::istringstream lineStream(line);
   if (lineStream >> nodeCount) {
@@ -192,7 +188,7 @@ int Parser::getNodeCount(const std::string &line) {
   }
 }
 std::vector<int> Parser::getVectorOfNode(const std::string &line,
-                                         const int nodeCount) {
+                                         const int nodeCount) const {
   std::vector<int> vectorOfNode;
   int node;
   std::istringstream lineStream(line);
@@ -236,11 +232,11 @@ int main() {
   file.createFile();
   std::vector<std::string> vectorOfStrings =
       file.convertFileToVectorOfStrings();
-  // file.closeInputFile();
+  file.closeInputFile();
   Parser parser;
   std::vector<DataSet> vectorOfDataSets =
       parser.parseVectorOfStrings(vectorOfStrings);
-  // file.closeInputFile();
+  file.closeInputFile();
   for (auto &dataSet : vectorOfDataSets) {
     TreeNode *nodeRoot = nullptr;
     printType type;
@@ -260,6 +256,8 @@ int main() {
                                               dataSet.secondVectorOfNode);
       break;
     }
+    default:
+      throw std::invalid_argument("input type is undefinded");
     }
     traverseTreeAndPushNodesToVector(nodeRoot, type, vectorOfNodeValue);
     file.writeFile(vectorOfNodeValue);
@@ -267,40 +265,40 @@ int main() {
   // file.closeOutputFile();
 }
 TreeNode *postorderAndInorder::traverse(const std::vector<int> &postorderVector,
-                                        unsigned int postorderVectorStart,
-                                        unsigned int postorderVectorEnd,
+                                        unsigned long postorderVectorStart,
+                                        unsigned long postorderVectorEnd,
                                         const std::vector<int> &inorderVector,
-                                        unsigned int inorderVectorStart,
-                                        unsigned int inorderVectorEnd) {
+                                        unsigned long inorderVectorStart,
+                                        unsigned long inorderVectorEnd) {
   if (postorderVectorStart == postorderVectorEnd) {
     return nullptr;
   }
   int rootValue = postorderVector.at(
       postorderVectorEnd - 1); // the element at `postorderVectorEnd - 1` in
                                // postorderVector is the root in current scope
-  TreeNode *newNode = new TreeNode(rootValue);
+  auto *newNode = new TreeNode(rootValue);
   if ((postorderVectorEnd - postorderVectorStart) == 1) {
     return newNode;
   }
-  unsigned int middleIndex;
+  unsigned long middleIndex;
   for (middleIndex = inorderVectorStart; middleIndex <= inorderVectorEnd;
        middleIndex++) {
     if (inorderVector.at(middleIndex) == rootValue) {
       break;
     }
   }
-  unsigned int leftInorderVectorStart = inorderVectorStart;
-  unsigned int leftInorderVectorEnd = middleIndex;
+  unsigned long leftInorderVectorStart = inorderVectorStart;
+  unsigned long leftInorderVectorEnd = middleIndex;
 
-  unsigned int rightInorderVectorStart = leftInorderVectorEnd + 1;
-  unsigned int rightInorderVectorEnd = inorderVectorEnd;
+  unsigned long rightInorderVectorStart = leftInorderVectorEnd + 1;
+  unsigned long rightInorderVectorEnd = inorderVectorEnd;
 
-  unsigned int leftpostorderVectorStart = postorderVectorStart;
-  unsigned int leftpostorderVectorEnd =
+  unsigned long leftpostorderVectorStart = postorderVectorStart;
+  unsigned long leftpostorderVectorEnd =
       leftpostorderVectorStart + (middleIndex - inorderVectorStart);
 
-  unsigned int rightpostorderVectorStart = leftpostorderVectorEnd;
-  unsigned int rightpostorderVectorEnd = postorderVectorEnd - 1;
+  unsigned long rightpostorderVectorStart = leftpostorderVectorEnd;
+  unsigned long rightpostorderVectorEnd = postorderVectorEnd - 1;
   newNode->left = traverse(postorderVector, leftpostorderVectorStart,
                            leftpostorderVectorEnd, inorderVector,
                            leftInorderVectorStart, leftInorderVectorEnd);
