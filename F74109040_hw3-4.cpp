@@ -93,10 +93,19 @@ int main() {
   file.closeOutputFile();
   return 0;
 }
+/**
+ * add edge to the vector according to the f, s, w
+ */
 void Graph::addEdge(int f, int s, int w) {
   vectorOfEdges.push(AdjacentList(f, s, w));
 }
+/**
+ * add edge to the vecot with `AdjacentList` data type
+ */
 void Graph::addEdge(AdjacentList list) { vectorOfEdges.push(list); }
+/**
+ * the Kruskal’s algorithm
+ */
 unsigned int Graph::algo() {
   unsigned int count = 0;
   unsigned int weightCount = 0;
@@ -127,6 +136,9 @@ unsigned int Graph::algo() {
   }
   return weightCount;
 }
+/**
+ * find the parent value in the set target value belong in
+ */
 int Graph::findParent(int target) {
   auto finded = sets.find(target);
   if (finded == sets.end()) {
@@ -137,6 +149,9 @@ int Graph::findParent(int target) {
   }
   return finded->second.parentValue;
 }
+/**
+ * union two sets
+ */
 void Graph::unionSets(int a, int b) {
   SetsNode &aNode = sets.at(a);
   SetsNode &bNode = sets.at(b);
@@ -150,6 +165,10 @@ void Graph::unionSets(int a, int b) {
     bNode.childCount += bNode.childCount + aNode.childCount + 1;
   }
 }
+/**
+ * handle file input output,tries to open file and create a output file base on
+ * the input file name
+ */
 void FileIO::openFile() {
   inputFileBuffer.open(inputFileName);
   if (inputFileBuffer.is_open()) {
@@ -162,6 +181,9 @@ void FileIO::openFile() {
     openFile();
   }
 }
+/**
+ * close input file fstream
+ */
 void FileIO::closeInputFile() { inputFileBuffer.close(); }
 std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   std::string lineBuffer;
@@ -171,6 +193,9 @@ std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   }
   return vectorOfStrings;
 }
+/**
+ * create output file, replacing `input` to `output` in the filename
+ */
 void FileIO::createFile() {
   outputFileName =
       std::regex_replace(inputFileName, std::regex("input"), "output");
@@ -183,14 +208,13 @@ void FileIO::createFile() {
     throw std::invalid_argument("outputfile did not open");
   }
 }
-void FileIO::writeFile(unsigned int result) {
-  outputFileBuffer << result;
-  // outputFileBuffer << vectorOfPath.at(0);
-  // for (unsigned long i = 1; i < vectorOfPath.size(); i++) {
-  //   outputFileBuffer << ' ' << vectorOfPath.at(i);
-  // }
-  // outputFileBuffer << std::endl;
-}
+/**
+ * write result to file
+ */
+void FileIO::writeFile(unsigned int result) { outputFileBuffer << result; }
+/**
+ * close output file filestream
+ */
 void FileIO::closeOutputFile() { outputFileBuffer.close(); }
 
 // private methods
@@ -200,12 +224,15 @@ void FileIO::closeOutputFile() { outputFileBuffer.close(); }
  * @throws throw an exception when user enter EOF
  */
 void FileIO::getFileNameFromInput() {
-  std::cout << "Please input the map file: ";
+  std::cout << "Please input the file name: ";
   std::cin >> inputFileName;
   if (std::cin.fail()) {
     handleCinError();
   }
 }
+/**
+ * parse data from string and get vertices and entrypoint
+ */
 Parser::verticesAndEntryPoint
 Parser::getVerticesCountAndEdgeCount(std::string &line) const {
   std::istringstream lineStream(line);
@@ -217,6 +244,9 @@ Parser::getVerticesCountAndEdgeCount(std::string &line) const {
     throw std::invalid_argument("can not get vertices and entrypoint");
   }
 }
+/**
+ * parse data from vector of strings and return data set
+ */
 Graph Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   Parser::verticesAndEntryPoint tmp =
       getVerticesCountAndEdgeCount(vectorOfStrings.at(startIndex++));
@@ -226,6 +256,9 @@ Graph Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   }
   return GraphObject;
 }
+/**
+ * parse data from string and get AdjacentList
+ */
 AdjacentList Parser::getAdjacentList(std::string &line) const {
   std::istringstream lineStream(line);
   int firstNode;

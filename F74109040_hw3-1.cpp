@@ -145,7 +145,10 @@ TreeNode *preorderAndInorder::createTreeWithTwoVectors(
   return traverse(preorderVector, 0, preorderVector.size(), inorderVector, 0,
                   inorderVector.size());
 }
-
+/** traverse the tree with preoder or postorder and push node value to vector so
+ * we can read the value afterwards
+ *
+ */
 void traverseTreeAndPushNodesToVector(TreeNode *nodeRoot, printType type,
                                       std::vector<int> &vectorOfNodeValue) {
   if (nodeRoot == nullptr) {
@@ -160,6 +163,9 @@ void traverseTreeAndPushNodesToVector(TreeNode *nodeRoot, printType type,
     vectorOfNodeValue.push_back(nodeRoot->value);
   }
 }
+/**
+ * parse data from string and get dataset count
+ */
 int Parser::getDataSetsCount(const std::string &line) const {
   int dataSetsCount;
   std::istringstream lineStream(line);
@@ -169,6 +175,9 @@ int Parser::getDataSetsCount(const std::string &line) const {
     throw std::invalid_argument("can not get datasetscount");
   }
 }
+/**
+ * parse data from string and get input type
+ */
 inputType Parser::getInputType(const std::string &line) const {
   if (line == "preorder-inorder") {
     return inputType::preOrder_inOrder;
@@ -178,6 +187,9 @@ inputType Parser::getInputType(const std::string &line) const {
     throw std::invalid_argument("can not get inputtype");
   }
 }
+/**
+ * parse data from string and get node count
+ */
 int Parser::getNodeCount(const std::string &line) const {
   int nodeCount;
   std::istringstream lineStream(line);
@@ -187,6 +199,9 @@ int Parser::getNodeCount(const std::string &line) const {
     throw std::invalid_argument("can not get node count");
   }
 }
+/**
+ * parse data from string and get vector node
+ */
 std::vector<int> Parser::getVectorOfNode(const std::string &line,
                                          const int nodeCount) const {
   std::vector<int> vectorOfNode;
@@ -201,7 +216,9 @@ std::vector<int> Parser::getVectorOfNode(const std::string &line,
   }
   return vectorOfNode;
 }
-// preorderAndInorder
+/**
+ * parse data from vector of strings and return vector of data sets
+ */
 std::vector<DataSet>
 Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   std::vector<DataSet> vectorOfDataSets;
@@ -262,8 +279,11 @@ int main() {
     traverseTreeAndPushNodesToVector(nodeRoot, type, vectorOfNodeValue);
     file.writeFile(vectorOfNodeValue);
   }
-  // file.closeOutputFile();
+  file.closeOutputFile();
 }
+/** same as  `preorderAndInorder::traverse`
+ *
+ */
 TreeNode *postorderAndInorder::traverse(const std::vector<int> &postorderVector,
                                         unsigned long postorderVectorStart,
                                         unsigned long postorderVectorEnd,
@@ -313,6 +333,10 @@ TreeNode *postorderAndInorder::createTreeWithTwoVectors(
   return traverse(postorderVector, 0, postorderVector.size(), inorderVector, 0,
                   inorderVector.size());
 }
+/**
+ * handle file input output,tries to open file and create a output file base on
+ * the input file name
+ */
 void FileIO::openFile() {
   inputFileBuffer.open(inputFileName);
   if (inputFileBuffer.is_open()) {
@@ -325,6 +349,9 @@ void FileIO::openFile() {
     openFile();
   }
 }
+/**
+ * close input file fstream
+ */
 void FileIO::closeInputFile() { inputFileBuffer.close(); }
 std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   std::string lineBuffer;
@@ -334,23 +361,35 @@ std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   }
   return vectorOfStrings;
 }
+/**
+ * tries to get the file name
+ * @throws throw an exception when user enter EOF
+ */
 void FileIO::getFileNameFromInput() {
-  std::cout << "Please input the map file: ";
+  std::cout << "Please input the file name: ";
   std::cin >> inputFileName;
   if (std::cin.fail()) {
     handleCinError();
   }
 }
+/**
+ * create output file, replacing `input` to `output` in the filename
+ */
 void FileIO::createFile() {
   outputFileName =
       std::regex_replace(inputFileName, std::regex("input"), "output");
   outputFileBuffer.open(outputFileName);
   if (outputFileBuffer.is_open()) {
-    std::cout << "outputfile opened" << std::endl;
+    std::cout << "outputfile"
+              << "`" << outputFileName << "`"
+              << "opened" << std::endl;
   } else {
     throw std::invalid_argument("outputfile did not open");
   }
 }
+/**
+ * write vector of node data to file
+ */
 void FileIO::writeFile(const std::vector<int> &vectorOfNode) {
   outputFileBuffer << vectorOfNode.at(0);
   for (unsigned long i = 1; i < vectorOfNode.size(); i++) {
@@ -358,4 +397,7 @@ void FileIO::writeFile(const std::vector<int> &vectorOfNode) {
   }
   outputFileBuffer << std::endl;
 }
+/**
+ * close output file filestream
+ */
 void FileIO::closeOutputFile() { outputFileBuffer.close(); }

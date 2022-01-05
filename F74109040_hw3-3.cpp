@@ -80,10 +80,19 @@ int main() {
   }
   file.closeOutputFile();
 }
+/**
+ * set adjacency matrix value according to the target
+ */
 void Graph::setMatrix(int row, int columun, int value) {
   matrix.at(row).at(columun) = value;
 }
+/**
+ * set entry point
+ */
 void Graph::setEntryPoint(int i) { entryPoint = i; }
+/**
+ * print the whole adjacency matrix
+ */
 void Graph::printMatrix() {
   std::cout << "vertices: " << vertices << "entrypoint: " << entryPoint
             << std::endl;
@@ -96,6 +105,10 @@ void Graph::printMatrix() {
   }
 }
 
+/**
+ * handle file input output,tries to open file and create a output file base on
+ * the input file name
+ */
 void FileIO::openFile() {
   inputFileBuffer.open(inputFileName);
   if (inputFileBuffer.is_open()) {
@@ -108,6 +121,9 @@ void FileIO::openFile() {
     openFile();
   }
 }
+/**
+ * close input file fstream
+ */
 void FileIO::closeInputFile() { inputFileBuffer.close(); }
 std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   std::string lineBuffer;
@@ -117,6 +133,9 @@ std::vector<std::string> FileIO::convertFileToVectorOfStrings() {
   }
   return vectorOfStrings;
 }
+/**
+ * create output file, replacing `input` to `output` in the filename
+ */
 void FileIO::createFile() {
   outputFileName =
       std::regex_replace(inputFileName, std::regex("input"), "output");
@@ -129,6 +148,9 @@ void FileIO::createFile() {
     throw std::invalid_argument("outputfile did not open");
   }
 }
+/**
+ * write vector of path data to file
+ */
 void FileIO::writeFile(std::vector<int> &vectorOfPath) {
   outputFileBuffer << vectorOfPath.at(0);
   for (unsigned long i = 1; i < vectorOfPath.size(); i++) {
@@ -136,6 +158,9 @@ void FileIO::writeFile(std::vector<int> &vectorOfPath) {
   }
   outputFileBuffer << std::endl;
 }
+/**
+ * close output file filestream
+ */
 void FileIO::closeOutputFile() { outputFileBuffer.close(); }
 
 // private methods
@@ -145,12 +170,15 @@ void FileIO::closeOutputFile() { outputFileBuffer.close(); }
  * @throws throw an exception when user enter EOF
  */
 void FileIO::getFileNameFromInput() {
-  std::cout << "Please input the map file: ";
+  std::cout << "Please input the file name: ";
   std::cin >> inputFileName;
   if (std::cin.fail()) {
     handleCinError();
   }
 }
+/**
+ * parse data from string and get data sets count
+ */
 int Parser::getDataSetsCount(std::string &line) const {
   int dataSetsCount;
   std::istringstream lineStream(line);
@@ -160,6 +188,9 @@ int Parser::getDataSetsCount(std::string &line) const {
     throw std::invalid_argument("can not get data set count");
   }
 }
+/**
+ * parse data from string and get vertices and entrypoint
+ */
 Parser::verticesAndEntryPoint
 Parser::getVerticesCountAndEntryPoint(std::string &line) const {
   std::istringstream lineStream(line);
@@ -171,6 +202,9 @@ Parser::getVerticesCountAndEntryPoint(std::string &line) const {
     throw std::invalid_argument("can not get vertices and entrypoint");
   }
 }
+/**
+ *  parse the whole matrix from vector of strings
+ */
 void Parser::parseMatrixInput(int vertices,
                               std::vector<std::string> vectorOfStrings,
                               Graph &targetGraph) const {
@@ -187,6 +221,9 @@ void Parser::parseMatrixInput(int vertices,
     }
   }
 }
+/**
+ * parse data from vector of strings and return vector of data sets
+ */
 std::vector<Graph>
 Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   std::vector<Graph> vectorOfGraph;
@@ -204,10 +241,17 @@ Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
   }
   return vectorOfGraph;
 }
+
+/**
+ * the BFS function with default entrypoint and queue
+ */
 void Graph::BFS() {
   std::queue<int> queue;
   BFS(entryPoint, queue);
 }
+/**
+ * the BFS function
+ */
 void Graph::BFS(int start, std::queue<int> &queue) {
   queue.push(start);
   visited.insert(start);

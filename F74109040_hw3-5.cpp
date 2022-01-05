@@ -27,7 +27,6 @@ public:
   void addStart(unsigned int i);
   std::map<int, int> algo();
   void algo(int i, std::map<int, int> &shortestDistance);
-  std::vector<std::pair<int, int>> sort(std::map<int, int> &shortestDistance);
   std::map<int, std::vector<AdjacentNode>> mapOfAdjacentList;
   std::unordered_set<int> visited;
 };
@@ -36,7 +35,7 @@ public:
   void getFileNameFromInput();
   void openFile();
   void createFile();
-  void writeFile(std::vector<std::pair<int, int>> result);
+  void writeFile(std::map<int, int> &shortestDistance);
   void closeInputFile();
   void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
@@ -74,14 +73,10 @@ int main() {
   Parser parser;
   Graph myGraph = parser.parseVectorOfStrings(vectorOfStrings);
   std::map<int, int> shortestDistance = myGraph.algo();
-  std::vector<std::pair<int, int>> result = myGraph.sort(shortestDistance);
-  file.writeFile(result);
+  file.writeFile(shortestDistance);
   file.closeOutputFile();
   return 0;
 }
-/**
- * add edge to the vector according to the f, s, w
- */
 /**
  * add edge to the vecot with `AdjacentList` data type
  */
@@ -103,20 +98,28 @@ void Graph::addEdge(edge edge) {
     findedSecond->second.push_back({edge.first, edge.weight});
   }
 }
+/**
+ * add start index to graph object
+ */
 void Graph::addStart(unsigned int i) { start = i; }
 
+/**
+ * a wrapper around `algo()` which init a map and pass in the start index
+ */
 std::map<int, int> Graph::algo() {
   std::map<int, int> shortestDistance;
   algo(start, shortestDistance);
   return shortestDistance;
 }
+/**
+ * the main algo
+ */
 void Graph::algo(int i, std::map<int, int> &shortestDistance) {
   visited.insert(i);
   std::vector<AdjacentNode> &vectorOfNeighboors = mapOfAdjacentList.at(i);
   if (!shortestDistance.count(i)) {
     shortestDistance.insert(std::pair<int, int>(i, 0));
   }
-  // int distance = shortestDistance.count(i) ? shortestDistance.at(i) : 0;
   int distance = shortestDistance.at(i);
   for (const auto &a : vectorOfNeighboors) {
     if (!visited.count(a.des)) {
@@ -128,16 +131,9 @@ void Graph::algo(int i, std::map<int, int> &shortestDistance) {
 bool compare(std::pair<int, int> &a, std::pair<int, int> &b) {
   return a.first < b.first;
 }
-std::vector<std::pair<int, int>>
-Graph::sort(std::map<int, int> &shortestDistance) {
-  std::vector<std::pair<int, int>> vectorOfPairs;
-  for (const auto &e : shortestDistance) {
-    vectorOfPairs.push_back(e);
-  }
-  std::sort(vectorOfPairs.begin(), vectorOfPairs.end(), compare);
-  return vectorOfPairs;
-}
-
+/**
+ *
+ */
 void FileIO::openFile() {
   inputFileBuffer.open(inputFileName);
   if (inputFileBuffer.is_open()) {
@@ -177,8 +173,8 @@ void FileIO::createFile() {
 /**
  * write result to file
  */
-void FileIO::writeFile(std::vector<std::pair<int, int>> result) {
-  for (const auto &e : result) {
+void FileIO::writeFile(std::map<int, int> &shortestDistance) {
+  for (const auto &e : shortestDistance) {
     outputFileBuffer << e.first << ' ' << e.second << std::endl;
   }
 }
@@ -194,7 +190,7 @@ void FileIO::closeOutputFile() { outputFileBuffer.close(); }
  * @throws throw an exception when user enter EOF
  */
 void FileIO::getFileNameFromInput() {
-  std::cout << "Please input the map file: ";
+  std::cout << "Please input the file name: ";
   std::cin >> inputFileName;
   if (std::cin.fail()) {
     handleCinError();
