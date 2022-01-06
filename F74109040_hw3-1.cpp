@@ -313,7 +313,7 @@ std::vector<int> Parser::getVectorOfNode(const std::string &line,
     if (lineStream >> node) {
       vectorOfNode.push_back(node);
     } else {
-      throw std::invalid_argument("get get node value");
+      throw std::invalid_argument("can not get node value");
     }
   }
   return vectorOfNode;

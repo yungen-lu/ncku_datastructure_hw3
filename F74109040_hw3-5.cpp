@@ -9,7 +9,7 @@
 #include <vector>
 class AdjacentNode {
 public:
-  int des;
+  int connectedNode;
   unsigned int weight;
 };
 struct edge {
@@ -122,9 +122,10 @@ void Graph::algo(int i, std::map<int, int> &shortestDistance) {
   }
   int distance = shortestDistance.at(i);
   for (const auto &a : vectorOfNeighboors) {
-    if (!visited.count(a.des)) {
-      shortestDistance.insert(std::pair<int, int>(a.des, a.weight + distance));
-      algo(a.des, shortestDistance);
+    if (!visited.count(a.connectedNode)) {
+      shortestDistance.insert(
+          std::pair<int, int>(a.connectedNode, a.weight + distance));
+      algo(a.connectedNode, shortestDistance);
     }
   }
 }
