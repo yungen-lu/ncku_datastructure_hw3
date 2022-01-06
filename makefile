@@ -6,7 +6,9 @@
 	g++ -O2 -std=gnu++11 -pedantic F74109040_hw3-3.cpp -o F74109040_hw3-3
 3-4: F74109040_hw3-4.cpp
 	g++ -O2 -std=gnu++11 -pedantic F74109040_hw3-4.cpp -o F74109040_hw3-4
-all: 3-1 3-2 3-3 3-4
+3-5: F74109040_hw3-4.cpp
+	g++ -O2 -std=gnu++11 -pedantic F74109040_hw3-5.cpp -o F74109040_hw3-5
+all: 3-1 3-2 3-3 3-4 3-5
 
 
 clean3-1:
@@ -17,7 +19,9 @@ clean3-3:
 	rm -rf F74109040_hw3-3
 clean3-4:
 	rm -rf F74109040_hw3-4
-cleanAll: clean3-1 clean3-2 clean3-3 clean3-4 cleanDebugFiles
+clean3-5:
+	rm -rf F74109040_hw3-5
+cleanAll: clean3-1 clean3-2 clean3-3 clean3-4 clean3-5 cleanDebugFiles
 
 cleanDebugFiles:
 	rm -rf *.dSYM
