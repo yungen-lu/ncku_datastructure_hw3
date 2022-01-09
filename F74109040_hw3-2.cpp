@@ -29,7 +29,7 @@ public:
   void getFileNameFromInput();
   void openFile();
   void createFile();
-  void writeFile(std::vector<int> &vectorOfPath);
+  void writeFile(const std::vector<int> &vectorOfPath);
   std::vector<std::string> convertFileToVectorOfStrings();
   void closeOutputFile();
   void closeInputFile();
@@ -50,8 +50,9 @@ private:
     int vertices;
     int entryPoint;
   };
-  int getDataSetsCount(std::string &line) const;
-  verticesAndEntryPoint getVerticesCountAndEntryPoint(std::string &line) const;
+  int getDataSetsCount(const std::string &line) const;
+  verticesAndEntryPoint
+  getVerticesCountAndEntryPoint(const std::string &line) const;
   void parseMatrixInput(int vertices, std::vector<std::string> vectorOfStrings,
                         Graph &targetGraph) const;
   int startIndex = 0;
@@ -148,7 +149,7 @@ void FileIO::createFile() {
 /**
  * write vector of node data to file
  */
-void FileIO::writeFile(std::vector<int> &vectorOfPath) {
+void FileIO::writeFile(const std::vector<int> &vectorOfPath) {
   outputFileBuffer << vectorOfPath.at(0);
   for (unsigned long i = 1; i < vectorOfPath.size(); i++) {
     outputFileBuffer << ' ' << vectorOfPath.at(i);
@@ -174,7 +175,7 @@ void FileIO::getFileNameFromInput() {
 /**
  * parse data from string and get dataset count
  */
-int Parser::getDataSetsCount(std::string &line) const {
+int Parser::getDataSetsCount(const std::string &line) const {
   int dataSetsCount;
   std::istringstream lineStream(line);
   if (lineStream >> dataSetsCount) {
@@ -188,7 +189,7 @@ int Parser::getDataSetsCount(std::string &line) const {
  * parse data from string and get vertices and entrypoint
  */
 Parser::verticesAndEntryPoint
-Parser::getVerticesCountAndEntryPoint(std::string &line) const {
+Parser::getVerticesCountAndEntryPoint(const std::string &line) const {
   std::istringstream lineStream(line);
   int vertices;
   int entryPoint;

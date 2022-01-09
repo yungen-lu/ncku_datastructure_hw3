@@ -35,7 +35,7 @@ public:
   void getFileNameFromInput();
   void openFile();
   void createFile();
-  void writeFile(std::map<int, int> &shortestDistance);
+  void writeFile(const std::map<int, int> &shortestDistance);
   void closeInputFile();
   void closeOutputFile();
   std::vector<std::string> convertFileToVectorOfStrings();
@@ -51,10 +51,10 @@ public:
   Graph parseVectorOfStrings(std::vector<std::string> vectorOfStrings);
 
 private:
-  unsigned int getVerticesCount(std::string &line) const;
+  unsigned int getVerticesCount(const std::string &line) const;
   unsigned int startIndex = 0;
-  edge getEdge(std::string &line) const;
-  unsigned int getStartRoot(std::string &line) const;
+  edge getEdge(const std::string &line) const;
+  unsigned int getStartRoot(const std::string &line) const;
 };
 
 void handleCinError() {
@@ -116,7 +116,7 @@ std::map<int, int> Graph::algo() {
  */
 void Graph::algo(int i, std::map<int, int> &shortestDistance) {
   visited.insert(i);
-  std::vector<AdjacentNode> &vectorOfNeighboors = mapOfAdjacentList.at(i);
+  const std::vector<AdjacentNode> &vectorOfNeighboors = mapOfAdjacentList.at(i);
   if (!shortestDistance.count(i)) {
     shortestDistance.insert(std::pair<int, int>(i, 0));
   }
@@ -129,7 +129,7 @@ void Graph::algo(int i, std::map<int, int> &shortestDistance) {
     }
   }
 }
-bool compare(std::pair<int, int> &a, std::pair<int, int> &b) {
+bool compare(const std::pair<int, int> &a, const std::pair<int, int> &b) {
   return a.first < b.first;
 }
 /**
@@ -174,7 +174,7 @@ void FileIO::createFile() {
 /**
  * write result to file
  */
-void FileIO::writeFile(std::map<int, int> &shortestDistance) {
+void FileIO::writeFile(const std::map<int, int> &shortestDistance) {
   for (const auto &e : shortestDistance) {
     outputFileBuffer << e.first << ' ' << e.second << std::endl;
   }
@@ -197,7 +197,7 @@ void FileIO::getFileNameFromInput() {
     handleCinError();
   }
 }
-unsigned int Parser::getVerticesCount(std::string &line) const {
+unsigned int Parser::getVerticesCount(const std::string &line) const {
   std::istringstream lineStream(line);
   unsigned int verticesCount;
   if (lineStream >> verticesCount) {
@@ -206,7 +206,7 @@ unsigned int Parser::getVerticesCount(std::string &line) const {
     throw std::invalid_argument("can not get vertices");
   }
 }
-edge Parser::getEdge(std::string &line) const {
+edge Parser::getEdge(const std::string &line) const {
   std::istringstream lineStream(line);
   int start;
   int des;
@@ -217,7 +217,7 @@ edge Parser::getEdge(std::string &line) const {
     throw std::invalid_argument("can not get edges");
   }
 }
-unsigned int Parser::getStartRoot(std::string &line) const {
+unsigned int Parser::getStartRoot(const std::string &line) const {
   std::istringstream lineStream(line);
   unsigned int start;
   if (lineStream >> start) {

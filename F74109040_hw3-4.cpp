@@ -67,9 +67,10 @@ private:
     unsigned int verticesCount;
     unsigned int edgeCount;
   };
-  verticesAndEntryPoint getVerticesCountAndEdgeCount(std::string &line) const;
+  verticesAndEntryPoint
+  getVerticesCountAndEdgeCount(const std::string &line) const;
   unsigned int startIndex = 0;
-  AdjacentList getAdjacentList(std::string &line) const;
+  AdjacentList getAdjacentList(const std::string &line) const;
 };
 
 void handleCinError() {
@@ -234,7 +235,7 @@ void FileIO::getFileNameFromInput() {
  * parse data from string and get vertices and entrypoint
  */
 Parser::verticesAndEntryPoint
-Parser::getVerticesCountAndEdgeCount(std::string &line) const {
+Parser::getVerticesCountAndEdgeCount(const std::string &line) const {
   std::istringstream lineStream(line);
   unsigned int verticesCount;
   unsigned int edgeCount;
@@ -259,7 +260,7 @@ Graph Parser::parseVectorOfStrings(std::vector<std::string> vectorOfStrings) {
 /**
  * parse data from string and get AdjacentList
  */
-AdjacentList Parser::getAdjacentList(std::string &line) const {
+AdjacentList Parser::getAdjacentList(const std::string &line) const {
   std::istringstream lineStream(line);
   int firstNode;
   int secondNode;

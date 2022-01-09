@@ -108,7 +108,7 @@ int main() {
   std::vector<DataSet> vectorOfDataSets =
       parser.parseVectorOfStrings(vectorOfStrings);
   file.closeInputFile();
-  for (auto &dataSet : vectorOfDataSets) {
+  for (const auto &dataSet : vectorOfDataSets) {
     TreeNode *nodeRoot = nullptr;
     printType type;
     std::vector<int> vectorOfNodeValue;
